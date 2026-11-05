@@ -1,0 +1,25 @@
+{
+  "schema": "dail-near-thesis-checks-v1",
+  "ran_at": "2026-11-05T23:27:13.740Z",
+  "results": [
+    {
+      "id": "CHECK-1",
+      "claim": "thesis C1 liveness: recorded block heights are real and the chains keep advancing",
+      "verdict": "PASS",
+      "detail": "testnet: recorded 276408854 -> live 276408930 (+76); mainnet: recorded 223234442 -> live 223234513 (+71)"
+    },
+    {
+      "id": "CHECK-2",
+      "claim": "thesis C2 viability: 5 TGas agent tx costs < 0.01 NEAR at live gas prices",
+      "verdict": "PASS",
+      "detail": "testnet: live gas_price 100000000 yocto/gas -> 5 TGas = 0.00050000 NEAR (< 0.01: true); mainnet: live gas_price 100000000 yocto/gas -> 5 TGas = 0.00050000 NEAR (< 0.01: true)"
+    },
+    {
+      "id": "CHECK-3",
+      "claim": "thesis evidence: every recorded testnet tx hash re-queries as a real, successful transaction",
+      "verdict": "PASS",
+      "detail": "thesis-model-tx-1 7F1DFezNMLhLjWPeZ9A89bvHjiaPKZmosQ54v3qFUfsx: status=SuccessValue signer/receiver match=true block=undefined; thesis-model-tx-2 5i1Av55a5NfdLatANhK1wkDbE38DgaRP1WikB5UGmfEX: status=SuccessValue signer/receiver match=true block=undefined"
+    }
+  ],
+  "overall": "PASS"
+}
