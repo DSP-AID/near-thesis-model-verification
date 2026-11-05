@@ -1,28 +1,28 @@
 {
   "schema": "dail-near-thesis-model-v1",
   "bounty": "bnty_0485",
-  "generated_at": "2026-11-05T23:26:20.853Z",
+  "generated_at": "2026-11-05T23:29:37.693Z",
   "agent_tx_gas_tgas": 5,
   "networks": {
     "testnet": {
       "chain_id": "testnet",
       "rpc_url": "https://rpc.testnet.near.org",
-      "latest_block_height": 276408854,
-      "sampled_blocks": 9,
-      "block_interval_seconds": 0.572,
-      "gas_price_yocto_per_gas": "100000000000",
+      "latest_block_height": 276409173,
+      "sampled_blocks": 8,
+      "block_interval_seconds": 0.635,
+      "gas_price_yocto_per_gas": "100000000",
       "agent_tx_gas_tgas": 5,
-      "agent_tx_cost_near": 0.5
+      "agent_tx_cost_near": 0.0005
     },
     "mainnet": {
       "chain_id": "mainnet",
       "rpc_url": "https://rpc.mainnet.near.org",
-      "latest_block_height": 223234442,
+      "latest_block_height": 223234780,
       "sampled_blocks": 9,
-      "block_interval_seconds": 0.574,
-      "gas_price_yocto_per_gas": "100000000000",
+      "block_interval_seconds": 0.562,
+      "gas_price_yocto_per_gas": "100000000",
       "agent_tx_gas_tgas": 5,
-      "agent_tx_cost_near": 0.5
+      "agent_tx_cost_near": 0.0005
     }
   },
   "claims": [

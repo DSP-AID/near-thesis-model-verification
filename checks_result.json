@@ -1,12 +1,12 @@
 {
   "schema": "dail-near-thesis-checks-v1",
-  "ran_at": "2026-11-05T23:27:13.740Z",
+  "ran_at": "2026-11-05T23:30:30.519Z",
   "results": [
     {
       "id": "CHECK-1",
       "claim": "thesis C1 liveness: recorded block heights are real and the chains keep advancing",
       "verdict": "PASS",
-      "detail": "testnet: recorded 276408854 -> live 276408930 (+76); mainnet: recorded 223234442 -> live 223234513 (+71)"
+      "detail": "testnet: recorded 276409173 -> live 276409258 (+85); mainnet: recorded 223234780 -> live 223234854 (+74)"
     },
     {
       "id": "CHECK-2",
@@ -18,7 +18,7 @@
       "id": "CHECK-3",
       "claim": "thesis evidence: every recorded testnet tx hash re-queries as a real, successful transaction",
       "verdict": "PASS",
-      "detail": "thesis-model-tx-1 7F1DFezNMLhLjWPeZ9A89bvHjiaPKZmosQ54v3qFUfsx: status=SuccessValue signer/receiver match=true block=undefined; thesis-model-tx-2 5i1Av55a5NfdLatANhK1wkDbE38DgaRP1WikB5UGmfEX: status=SuccessValue signer/receiver match=true block=undefined"
+      "detail": "thesis-model-tx-1 5RPJeP2gD5jXv9mLwKiFGe2goku6FFeJhiynby9j47TP: status=SuccessValue signer/receiver match=true block=undefined; thesis-model-tx-2 Df4kyu3jTKp28DCq4LBF4SMpY7jimbp15eWSgG6yZdhb: status=SuccessValue signer/receiver match=true block=undefined"
     }
   ],
   "overall": "PASS"

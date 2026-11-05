@@ -1,36 +1,36 @@
-# dail_bnty_0485 run_all transcript started 2026-11-05T23:26:04.071Z
+# dail_bnty_0485 run_all transcript started 2026-11-05T23:29:14.929Z
 
-$ node model.mjs   (2026-11-05T23:26:04.076Z)
+$ node model.mjs   (2026-11-05T23:29:14.934Z)
 === NEAR AGENT ECONOMY THESIS MODEL (re-runnable) ===
-[testnet] sampling live RPC... height=276408854 interval=0.572s cost/5TGas=0.5 NEAR
-[mainnet] sampling live RPC... height=223234442 interval=0.574s cost/5TGas=0.5 NEAR
+[testnet] sampling live RPC... height=276409173 interval=0.635s cost/5TGas=0.0005 NEAR
+[mainnet] sampling live RPC... height=223234780 interval=0.562s cost/5TGas=0.0005 NEAR
 MODEL RUN: PASS (thesis_data.json + dashboard.html written)
 EXIT 0
 
-$ node near_tx.mjs   (2026-11-05T23:26:20.869Z)
+$ node near_tx.mjs   (2026-11-05T23:29:37.713Z)
 === NEAR TESTNET TX EVIDENCE (thesis model pattern) ===
 [near_tx] paying account: dspaid-bounty452.testnet (dspaid identity account (bnty_0450 connection))
 [near_tx] sending thesis-model-tx-1 (0.001 NEAR transfer)... OK
-              hash: 7F1DFezNMLhLjWPeZ9A89bvHjiaPKZmosQ54v3qFUfsx
-              https://testnet.nearblocks.io/txns/7F1DFezNMLhLjWPeZ9A89bvHjiaPKZmosQ54v3qFUfsx
+              hash: 5RPJeP2gD5jXv9mLwKiFGe2goku6FFeJhiynby9j47TP
+              https://testnet.nearblocks.io/txns/5RPJeP2gD5jXv9mLwKiFGe2goku6FFeJhiynby9j47TP
 [near_tx] sending thesis-model-tx-2 (0.001 NEAR transfer)... OK
-              hash: 5i1Av55a5NfdLatANhK1wkDbE38DgaRP1WikB5UGmfEX
-              https://testnet.nearblocks.io/txns/5i1Av55a5NfdLatANhK1wkDbE38DgaRP1WikB5UGmfEX
+              hash: Df4kyu3jTKp28DCq4LBF4SMpY7jimbp15eWSgG6yZdhb
+              https://testnet.nearblocks.io/txns/Df4kyu3jTKp28DCq4LBF4SMpY7jimbp15eWSgG6yZdhb
 NEAR TX EVIDENCE: PASS (tx_evidence.json written)
 EXIT 0
 
-$ node checks.mjs   (2026-11-05T23:26:54.749Z)
+$ node checks.mjs   (2026-11-05T23:30:11.529Z)
 === OWN CHECKS AGAINST THESIS CLAIMS (live RPC) ===
 PASS  CHECK-1: thesis C1 liveness: recorded block heights are real and the chains keep advancing
-      testnet: recorded 276408854 -> live 276408930 (+76); mainnet: recorded 223234442 -> live 223234513 (+71)
+      testnet: recorded 276409173 -> live 276409258 (+85); mainnet: recorded 223234780 -> live 223234854 (+74)
 PASS  CHECK-2: thesis C2 viability: 5 TGas agent tx costs < 0.01 NEAR at live gas prices
       testnet: live gas_price 100000000 yocto/gas -> 5 TGas = 0.00050000 NEAR (< 0.01: true); mainnet: live gas_price 100000000 yocto/gas -> 5 TGas = 0.00050000 NEAR (< 0.01: true)
 PASS  CHECK-3: thesis evidence: every recorded testnet tx hash re-queries as a real, successful transaction
-      thesis-model-tx-1 7F1DFezNMLhLjWPeZ9A89bvHjiaPKZmosQ54v3qFUfsx: status=SuccessValue signer/receiver match=true block=undefined; thesis-model-tx-2 5i1Av55a5NfdLatANhK1wkDbE38DgaRP1WikB5UGmfEX: status=SuccessValue signer/receiver match=true block=undefined
+      thesis-model-tx-1 5RPJeP2gD5jXv9mLwKiFGe2goku6FFeJhiynby9j47TP: status=SuccessValue signer/receiver match=true block=undefined; thesis-model-tx-2 Df4kyu3jTKp28DCq4LBF4SMpY7jimbp15eWSgG6yZdhb: status=SuccessValue signer/receiver match=true block=undefined
 CHECKS: 3/3 PASS -> PASS
 EXIT 0
 
-$ node verify_citations.mjs   (2026-11-05T23:27:13.756Z)
+$ node verify_citations.mjs   (2026-11-05T23:30:30.535Z)
 === CITATION RESOLUTION (15 sources) ===
 PASS  S1 https://near.org -> HTTP 200
 PASS  S2 https://www.near.org/intents -> HTTP 200

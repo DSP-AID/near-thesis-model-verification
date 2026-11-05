@@ -13,10 +13,10 @@ const RPCS = { testnet: 'https://rpc.testnet.near.org', mainnet: 'https://rpc.ma
 const AGENT_TX_GAS = 5_000_000_000_000n; // 5 TGas — typical agent micropayment / function-call tx budget
 const SAMPLE_MS = 2000;
 
-// v1 model input: per-network gas price (yoctoNEAR per gas unit) used for the cost chart.
-// shortcut: hardcoded mainnet floor for BOTH networks; testnet's live floor is ~10x lower,
-// so the recorded testnet cost figure is overstated. Fixed in the improvement commit by a live query.
-const GAS_PRICE_YOCTO_PER_GAS = { testnet: 100_000_000_000n, mainnet: 100_000_000_000n };
+// Improvement over v1: per-network gas price (yoctoNEAR per gas unit) for the cost chart is now
+// QUERIED LIVE from each network's `gas_price` RPC method. v1 hardcoded 100_000_000_000 yocto/gas
+// (the stale mainnet floor) for both networks and overstated the per-tx cost ~1000x against the
+// live network price (~100_000_000 yocto/gas at record time); the recorded figure is corrected here.
 
 const outDir = path.dirname(fileURLToPath(import.meta.url));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -66,7 +66,7 @@ async function main() {
   for (const [name, url] of Object.entries(RPCS)) {
     process.stdout.write(`[${name}] sampling live RPC... `);
     const s = await sampleNetwork(url);
-    const price = GAS_PRICE_YOCTO_PER_GAS[name];
+    const price = BigInt((await rpc(url, 'gas_price', [null])).gas_price); // live per-network price
     const costNear = yoctoToNear(AGENT_TX_GAS * price);
     Object.assign(s, {
       gas_price_yocto_per_gas: price.toString(),
