@@ -9,8 +9,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const outDir = path.dirname(fileURLToPath(import.meta.url));
-const RPCS = { testnet: 'https://rpc.testnet.near.org', mainnet: 'https://rpc.mainnet.near.org' };
+// bnty_0510 polish: fastnear public RPCs are primary (official endpoints kept as fallback).
+const RPCS = {
+  testnet: ['https://rpc.testnet.fastnear.com', 'https://rpc.testnet.near.org'],
+  mainnet: ['https://rpc.fastnear.com', 'https://rpc.mainnet.near.org'],
+};
 const AGENT_TX_GAS = 5_000_000_000_000n; // 5 TGas, same tx class as claim C2
+const COST_TOL = 0.1; // 10% relative tolerance: gas prices legitimately drift between model run and check re-run
+const STALE_MIN_BLOCKS = 3600; // CHECK-1 recency grace floor (~1 h of chain growth) before flagging stale heights
+const STALE_GROWTH_FACTOR = 3; // CHECK-1 recency: tolerate up to 3x the expected height growth since generated_at
 
 async function rpc(url, method, params) {
   const res = await fetch(url, {
@@ -22,6 +29,14 @@ async function rpc(url, method, params) {
   return j.result;
 }
 
+async function pickRpc(name) {
+  let lastErr;
+  for (const url of RPCS[name]) {
+    try { const s = await rpc(url, 'status', {}); if (s.chain_id === name) return url; } catch (e) { lastErr = e; }
+  }
+  throw new Error(`${name}: no live RPC among ${RPCS[name].join(' | ')} (${lastErr?.message})`);
+}
+
 const results = [];
 function record(id, claim, pass, detail) {
   results.push({ id, claim, verdict: pass ? 'PASS' : 'FAIL', detail });
@@ -30,34 +45,53 @@ function record(id, claim, pass, detail) {
 
 async function check1_liveness(thesis) {
   // Thesis claim C1: both networks are live and advancing — stale recorded heights must have moved.
+  // bnty_0510 fix: "live > recorded" alone passed fabricated/stale heights; recorded heights must now
+  // also be RECENT: the observed growth is bounded by expected chain growth since thesis_data.json's
+  // generated_at (using its own recorded block interval), so old copied-in heights fail the check.
   const lines = [];
   let pass = true;
-  for (const [name, url] of Object.entries(RPCS)) {
+  const genMs = Date.parse(thesis.generated_at);
+  for (const name of Object.keys(RPCS)) {
     try {
+      const url = await pickRpc(name);
       const now = Number((await rpc(url, 'status', {})).sync_info.latest_block_height);
-      const recorded = thesis.networks[name].latest_block_height;
-      const ok = now > recorded;
+      const rec = thesis.networks[name];
+      const advanced = now - rec.latest_block_height;
+      const expected = Math.max(0, (Date.now() - genMs) / 1000) / rec.block_interval_seconds;
+      const limit = Math.max(STALE_MIN_BLOCKS, STALE_GROWTH_FACTOR * expected);
+      const ok = advanced > 0 && advanced <= limit;
       pass &&= ok;
-      lines.push(`${name}: recorded ${recorded} -> live ${now} (+${now - recorded})`);
+      lines.push(`${name}: recorded ${rec.latest_block_height} -> live ${now} (+${advanced}, recency limit ${Math.round(limit)} blocks)`);
     } catch (e) { pass = false; lines.push(`${name}: RPC error ${e.message}`); }
   }
-  record('CHECK-1', 'thesis C1 liveness: recorded block heights are real and the chains keep advancing', pass, lines.join('; '));
+  record('CHECK-1', 'thesis C1 liveness: recorded block heights are real, RECENT, and the chains keep advancing', pass, lines.join('; '));
 }
 
-async function check2_micropayment() {
+async function check2_micropayment(thesis) {
   // Thesis claim C2: a 5 TGas agent transaction costs < 0.01 NEAR at live gas prices.
+  // bnty_0510 fix (STEP-3 hole): CHECK-2 must not merely re-price a fresh number — the RECORDED
+  // agent_tx_cost_near + gas_price_yocto_per_gas in thesis_data.json must match the live
+  // recomputation within tolerance. Corrupting the file to v1 values (0.5 NEAR @ 1e11 yocto/gas)
+  // now fails here instead of passing silently.
   const lines = [];
   let pass = true;
-  for (const [name, url] of Object.entries(RPCS)) {
+  for (const name of Object.keys(RPCS)) {
     try {
+      const url = await pickRpc(name);
       const gp = await rpc(url, 'gas_price', [null]);
-      const costNear = Number(AGENT_TX_GAS * BigInt(gp.gas_price)) / 1e24;
-      const ok = costNear < 0.01;
+      const liveGas = Number(gp.gas_price);
+      const liveCost = Number(AGENT_TX_GAS * BigInt(gp.gas_price)) / 1e24;
+      const rec = thesis.networks[name];
+      const gasOk = Math.abs(liveGas - Number(rec.gas_price_yocto_per_gas)) <= COST_TOL * liveGas;
+      const costOk = Math.abs(liveCost - rec.agent_tx_cost_near) <= COST_TOL * liveCost;
+      const cheapOk = rec.agent_tx_cost_near < 0.01 && liveCost < 0.01;
+      const classOk = rec.agent_tx_gas_tgas === 5;
+      const ok = gasOk && costOk && cheapOk && classOk;
       pass &&= ok;
-      lines.push(`${name}: live gas_price ${gp.gas_price} yocto/gas -> 5 TGas = ${costNear.toFixed(8)} NEAR (< 0.01: ${ok})`);
+      lines.push(`${name}: recorded gas ${rec.gas_price_yocto_per_gas} / cost ${rec.agent_tx_cost_near} NEAR vs live gas ${liveGas} / cost ${liveCost.toFixed(8)} NEAR (match<=10%: gas=${gasOk} cost=${costOk}; <0.01: ${cheapOk}; 5TGas class: ${classOk})`);
     } catch (e) { pass = false; lines.push(`${name}: RPC error ${e.message}`); }
   }
-  record('CHECK-2', 'thesis C2 viability: 5 TGas agent tx costs < 0.01 NEAR at live gas prices', pass, lines.join('; '));
+  record('CHECK-2', 'thesis C2 viability: recorded cost/gas price equal the live recomputation and a 5 TGas agent tx costs < 0.01 NEAR', pass, lines.join('; '));
 }
 
 async function check3_tx_evidence() {
@@ -67,9 +101,13 @@ async function check3_tx_evidence() {
   const ev = JSON.parse(readFileSync(f, 'utf8'));
   const lines = [];
   let pass = true;
+  // bnty_0510: recorded RPC first, then the fallback list (an RPC being down must not fake a FAIL).
+  const candidates = [...new Set([ev.rpc, ...RPCS.testnet])];
   for (const tx of ev.transactions) {
     try {
-      const q = await rpc(ev.rpc, 'tx', [tx.tx_hash, tx.sender]);
+      let q, lastErr;
+      for (const url of candidates) { try { q = await rpc(url, 'tx', [tx.tx_hash, tx.sender]); break; } catch (e) { lastErr = e; } }
+      if (!q) throw lastErr;
       const kind = Object.keys(q.status ?? {})[0];
       const t = q.transaction ?? {}; // signer/receiver live under the `transaction` field of the RPC result
       const ok = kind === 'SuccessValue' && t.signer_id === tx.sender && t.receiver_id === tx.receiver;
@@ -84,7 +122,7 @@ async function main() {
   const thesis = JSON.parse(readFileSync(path.join(outDir, 'thesis_data.json'), 'utf8'));
   console.log('=== OWN CHECKS AGAINST THESIS CLAIMS (live RPC) ===');
   await check1_liveness(thesis);
-  await check2_micropayment();
+  await check2_micropayment(thesis);
   await check3_tx_evidence();
   const allPass = results.every((r) => r.verdict === 'PASS');
   writeFileSync(path.join(outDir, 'checks_result.json'), JSON.stringify({ schema: 'dail-near-thesis-checks-v1', ran_at: new Date().toISOString(), results, overall: allPass ? 'PASS' : 'FAIL' }, null, 2) + '\n');

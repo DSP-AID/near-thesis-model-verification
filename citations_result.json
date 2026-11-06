@@ -1,6 +1,6 @@
 {
   "schema": "dail-near-thesis-citations-v1",
-  "ran_at": "2026-11-05T23:30:46.424Z",
+  "ran_at": "2026-11-06T03:05:18.425Z",
   "rows": [
     {
       "id": "S1",
@@ -63,7 +63,7 @@
       "url": "https://rpc.testnet.near.org",
       "kind": "rpc",
       "chain": "testnet",
-      "note": "live testnet RPC used by model/checks",
+      "note": "official testnet RPC (fallback used by model/checks)",
       "verdict": "PASS",
       "result": "rpc chain_id=testnet"
     },
@@ -72,7 +72,7 @@
       "url": "https://rpc.mainnet.near.org",
       "kind": "rpc",
       "chain": "mainnet",
-      "note": "live mainnet RPC used by model/checks",
+      "note": "official mainnet RPC (fallback used by model/checks)",
       "verdict": "PASS",
       "result": "rpc chain_id=mainnet"
     },
@@ -126,6 +126,24 @@
       ],
       "verdict": "PASS",
       "result": "HTTP 403 (tolerated bot-block, see note)"
+    },
+    {
+      "id": "S16",
+      "url": "https://rpc.testnet.fastnear.com",
+      "kind": "rpc",
+      "chain": "testnet",
+      "note": "primary testnet RPC (fastnear) used by model/checks/near_tx (bnty_0510)",
+      "verdict": "PASS",
+      "result": "rpc chain_id=testnet"
+    },
+    {
+      "id": "S17",
+      "url": "https://rpc.fastnear.com",
+      "kind": "rpc",
+      "chain": "mainnet",
+      "note": "primary mainnet RPC (fastnear) used by model/checks (bnty_0510)",
+      "verdict": "PASS",
+      "result": "rpc chain_id=mainnet"
     }
   ],
   "overall": "PASS"

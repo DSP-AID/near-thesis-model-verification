@@ -1,24 +1,24 @@
 {
   "schema": "dail-near-thesis-checks-v1",
-  "ran_at": "2026-11-05T23:30:30.519Z",
+  "ran_at": "2026-11-06T03:07:08.020Z",
   "results": [
     {
       "id": "CHECK-1",
-      "claim": "thesis C1 liveness: recorded block heights are real and the chains keep advancing",
+      "claim": "thesis C1 liveness: recorded block heights are real, RECENT, and the chains keep advancing",
       "verdict": "PASS",
-      "detail": "testnet: recorded 276409173 -> live 276409258 (+85); mainnet: recorded 223234780 -> live 223234854 (+74)"
+      "detail": "testnet: recorded 276431677 -> live 276431899 (+222, recency limit 3600 blocks); mainnet: recorded 223257330 -> live 223257563 (+233, recency limit 3600 blocks)"
     },
     {
       "id": "CHECK-2",
-      "claim": "thesis C2 viability: 5 TGas agent tx costs < 0.01 NEAR at live gas prices",
+      "claim": "thesis C2 viability: recorded cost/gas price equal the live recomputation and a 5 TGas agent tx costs < 0.01 NEAR",
       "verdict": "PASS",
-      "detail": "testnet: live gas_price 100000000 yocto/gas -> 5 TGas = 0.00050000 NEAR (< 0.01: true); mainnet: live gas_price 100000000 yocto/gas -> 5 TGas = 0.00050000 NEAR (< 0.01: true)"
+      "detail": "testnet: recorded gas 100000000 / cost 0.0005 NEAR vs live gas 100000000 / cost 0.00050000 NEAR (match<=10%: gas=true cost=true; <0.01: true; 5TGas class: true); mainnet: recorded gas 100000000 / cost 0.0005 NEAR vs live gas 100000000 / cost 0.00050000 NEAR (match<=10%: gas=true cost=true; <0.01: true; 5TGas class: true)"
     },
     {
       "id": "CHECK-3",
       "claim": "thesis evidence: every recorded testnet tx hash re-queries as a real, successful transaction",
       "verdict": "PASS",
-      "detail": "thesis-model-tx-1 5RPJeP2gD5jXv9mLwKiFGe2goku6FFeJhiynby9j47TP: status=SuccessValue signer/receiver match=true block=undefined; thesis-model-tx-2 Df4kyu3jTKp28DCq4LBF4SMpY7jimbp15eWSgG6yZdhb: status=SuccessValue signer/receiver match=true block=undefined"
+      "detail": "thesis-model-tx-1 5AXUum42H9bPq1w3EuGpXbPtSKwb6jnGCkVN62BjJiTA: status=SuccessValue signer/receiver match=true block=undefined; thesis-model-tx-2 9qQHfiK3QQv35XheYrTBDVdRyue5BPu1jH9TUk6RQNpH: status=SuccessValue signer/receiver match=true block=undefined"
     }
   ],
   "overall": "PASS"

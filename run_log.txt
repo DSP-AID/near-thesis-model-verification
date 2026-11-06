@@ -1,37 +1,38 @@
-# dail_bnty_0485 run_all transcript started 2026-11-05T23:29:14.929Z
+# dail_bnty_0485 run_all transcript started 2026-11-06T03:04:50.519Z
 
-$ node model.mjs   (2026-11-05T23:29:14.934Z)
+$ node model.mjs   (2026-11-06T03:04:50.525Z)
 === NEAR AGENT ECONOMY THESIS MODEL (re-runnable) ===
-[testnet] sampling live RPC... height=276409173 interval=0.635s cost/5TGas=0.0005 NEAR
-[mainnet] sampling live RPC... height=223234780 interval=0.562s cost/5TGas=0.0005 NEAR
+[testnet] sampling live RPC... height=276431677 interval=0.696s cost/5TGas=0.0005 NEAR
+[mainnet] sampling live RPC... height=223257330 interval=0.519s cost/5TGas=0.0005 NEAR
 MODEL RUN: PASS (thesis_data.json + dashboard.html written)
 EXIT 0
 
-$ node near_tx.mjs   (2026-11-05T23:29:37.713Z)
+$ node near_tx.mjs   (2026-11-06T03:04:55.389Z)
 === NEAR TESTNET TX EVIDENCE (thesis model pattern) ===
+[near_tx] RPC: https://rpc.testnet.fastnear.com
 [near_tx] paying account: dspaid-bounty452.testnet (dspaid identity account (bnty_0450 connection))
 [near_tx] sending thesis-model-tx-1 (0.001 NEAR transfer)... OK
-              hash: 5RPJeP2gD5jXv9mLwKiFGe2goku6FFeJhiynby9j47TP
-              https://testnet.nearblocks.io/txns/5RPJeP2gD5jXv9mLwKiFGe2goku6FFeJhiynby9j47TP
+              hash: 5AXUum42H9bPq1w3EuGpXbPtSKwb6jnGCkVN62BjJiTA
+              https://testnet.nearblocks.io/txns/5AXUum42H9bPq1w3EuGpXbPtSKwb6jnGCkVN62BjJiTA
 [near_tx] sending thesis-model-tx-2 (0.001 NEAR transfer)... OK
-              hash: Df4kyu3jTKp28DCq4LBF4SMpY7jimbp15eWSgG6yZdhb
-              https://testnet.nearblocks.io/txns/Df4kyu3jTKp28DCq4LBF4SMpY7jimbp15eWSgG6yZdhb
+              hash: 9qQHfiK3QQv35XheYrTBDVdRyue5BPu1jH9TUk6RQNpH
+              https://testnet.nearblocks.io/txns/9qQHfiK3QQv35XheYrTBDVdRyue5BPu1jH9TUk6RQNpH
 NEAR TX EVIDENCE: PASS (tx_evidence.json written)
 EXIT 0
 
-$ node checks.mjs   (2026-11-05T23:30:11.529Z)
+$ node checks.mjs   (2026-11-06T03:04:59.702Z)
 === OWN CHECKS AGAINST THESIS CLAIMS (live RPC) ===
-PASS  CHECK-1: thesis C1 liveness: recorded block heights are real and the chains keep advancing
-      testnet: recorded 276409173 -> live 276409258 (+85); mainnet: recorded 223234780 -> live 223234854 (+74)
-PASS  CHECK-2: thesis C2 viability: 5 TGas agent tx costs < 0.01 NEAR at live gas prices
-      testnet: live gas_price 100000000 yocto/gas -> 5 TGas = 0.00050000 NEAR (< 0.01: true); mainnet: live gas_price 100000000 yocto/gas -> 5 TGas = 0.00050000 NEAR (< 0.01: true)
+PASS  CHECK-1: thesis C1 liveness: recorded block heights are real, RECENT, and the chains keep advancing
+      testnet: recorded 276431677 -> live 276431690 (+13, recency limit 3600 blocks); mainnet: recorded 223257330 -> live 223257338 (+8, recency limit 3600 blocks)
+PASS  CHECK-2: thesis C2 viability: recorded cost/gas price equal the live recomputation and a 5 TGas agent tx costs < 0.01 NEAR
+      testnet: recorded gas 100000000 / cost 0.0005 NEAR vs live gas 100000000 / cost 0.00050000 NEAR (match<=10%: gas=true cost=true; <0.01: true; 5TGas class: true); mainnet: recorded gas 100000000 / cost 0.0005 NEAR vs live gas 100000000 / cost 0.00050000 NEAR (match<=10%: gas=true cost=true; <0.01: true; 5TGas class: true)
 PASS  CHECK-3: thesis evidence: every recorded testnet tx hash re-queries as a real, successful transaction
-      thesis-model-tx-1 5RPJeP2gD5jXv9mLwKiFGe2goku6FFeJhiynby9j47TP: status=SuccessValue signer/receiver match=true block=undefined; thesis-model-tx-2 Df4kyu3jTKp28DCq4LBF4SMpY7jimbp15eWSgG6yZdhb: status=SuccessValue signer/receiver match=true block=undefined
+      thesis-model-tx-1 5AXUum42H9bPq1w3EuGpXbPtSKwb6jnGCkVN62BjJiTA: status=SuccessValue signer/receiver match=true block=undefined; thesis-model-tx-2 9qQHfiK3QQv35XheYrTBDVdRyue5BPu1jH9TUk6RQNpH: status=SuccessValue signer/receiver match=true block=undefined
 CHECKS: 3/3 PASS -> PASS
 EXIT 0
 
-$ node verify_citations.mjs   (2026-11-05T23:30:30.535Z)
-=== CITATION RESOLUTION (15 sources) ===
+$ node verify_citations.mjs   (2026-11-06T03:05:00.732Z)
+=== CITATION RESOLUTION (17 sources) ===
 PASS  S1 https://near.org -> HTTP 200
 PASS  S2 https://www.near.org/intents -> HTTP 200
 PASS  S3 https://docs.near.org -> HTTP 200
@@ -47,7 +48,9 @@ PASS  S12 https://github.com/DSP-AID/dail-testnet-escrow-demo -> HTTP 200
 PASS  S13 https://wallet.testnet.near.org -> HTTP 200
 PASS  S14 https://helper.testnet.near.org/account -> HTTP 400 (POST probe, account not created)
 PASS  S15 https://testnet.nearblocks.io -> HTTP 403 (tolerated bot-block, see note)
-CITATIONS: 15/15 resolve -> PASS
+PASS  S16 https://rpc.testnet.fastnear.com -> rpc chain_id=testnet
+PASS  S17 https://rpc.fastnear.com -> rpc chain_id=mainnet
+CITATIONS: 17/17 resolve -> PASS
 EXIT 0
 
 RUN ALL: PASS

@@ -19,14 +19,16 @@ const CITATIONS = [
   { id: 'S5', url: 'https://github.com/near/near-api-js', kind: 'get', note: 'SDK used by near_tx.mjs (library disclosure)' },
   { id: 'S6', url: 'https://github.com/bimajanuri/academic-writing-skill', kind: 'get', note: 'skill pack (MIT): 7-stage gated pipeline, verified citations' },
   { id: 'S7', url: 'https://github.com/gislio/academic-mentor', kind: 'get', note: 'secondary skill pack (GPL-3.0)' },
-  { id: 'S8', url: 'https://rpc.testnet.near.org', kind: 'rpc', chain: 'testnet', note: 'live testnet RPC used by model/checks' },
-  { id: 'S9', url: 'https://rpc.mainnet.near.org', kind: 'rpc', chain: 'mainnet', note: 'live mainnet RPC used by model/checks' },
+  { id: 'S8', url: 'https://rpc.testnet.near.org', kind: 'rpc', chain: 'testnet', note: 'official testnet RPC (fallback used by model/checks)' },
+  { id: 'S9', url: 'https://rpc.mainnet.near.org', kind: 'rpc', chain: 'mainnet', note: 'official mainnet RPC (fallback used by model/checks)' },
   { id: 'S10', url: 'https://dail-3dci.onrender.com/world/bounties/bnty_0411', kind: 'get', note: 'pattern source: held NEAR Investment Thesis build (not copied)' },
   { id: 'S11', url: 'https://dail-3dci.onrender.com/world/bounties/bnty_0450', kind: 'get', note: 'prior DSP-AID NEAR testnet escrow work (RPC connection provenance)' },
   { id: 'S12', url: 'https://github.com/DSP-AID/dail-testnet-escrow-demo', kind: 'get', note: 'reused NEAR testnet RPC signing pattern (pre-existing code, disclosed)' },
   { id: 'S13', url: 'https://wallet.testnet.near.org', kind: 'get', note: 'testnet wallet/faucet UI' },
   { id: 'S14', url: 'https://helper.testnet.near.org/account', kind: 'faucet', note: 'testnet faucet helper (throwaway-account path); POST-only endpoint, probed with an invalid pubkey' },
   { id: 'S15', url: 'https://testnet.nearblocks.io', kind: 'get', note: 'explorer for tx links; Cloudflare bot-blocks scripted GET (403) — canonical verification is the RPC `tx` re-query in checks.mjs', tolerate: [403] },
+  { id: 'S16', url: 'https://rpc.testnet.fastnear.com', kind: 'rpc', chain: 'testnet', note: 'primary testnet RPC (fastnear) used by model/checks/near_tx (bnty_0510)' },
+  { id: 'S17', url: 'https://rpc.fastnear.com', kind: 'rpc', chain: 'mainnet', note: 'primary mainnet RPC (fastnear) used by model/checks (bnty_0510)' },
 ];
 
 async function check(c) {

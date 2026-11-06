@@ -2,8 +2,8 @@
 // DAiL bnty_0485 — on-chain evidence for the thesis model pattern: sends real NEAR *testnet*
 // micropayments (the exact transaction class claim C2 prices) and records resolvable tx hashes.
 // Reuses the NEAR testnet RPC connection + signing pattern from DSP-AID/dail-testnet-escrow-demo
-// (bnty_0450): https://rpc.testnet.near.org + dspaid identity account, faucet fallback so a
-// stranger can re-run with zero secrets.
+// (bnty_0450): fastnear testnet RPC (official endpoint as fallback) + dspaid identity account,
+// faucet fallback so a stranger can re-run with zero secrets.
 //
 // Usage:  node near_tx.mjs     (keypair from DSPAID_KEYPAIR_PATH or the default file, else faucet)
 // Output: tx_evidence.json
@@ -18,17 +18,34 @@ import {
 } from 'near-api-js';
 import { base58 } from '@scure/base';
 
-const RPC = 'https://rpc.testnet.near.org';
+// bnty_0510 polish: fastnear testnet RPC is primary, the official endpoint stays as fallback.
+// Every call this script makes (status, query, block, broadcast_tx_commit, tx) was live-verified
+// against rpc.testnet.fastnear.com before the switch.
+const RPC_ENDPOINTS = ['https://rpc.testnet.fastnear.com', 'https://rpc.testnet.near.org'];
+let RPC = null; // resolved live in main() via pickTestnetRpc()
 const FAUCET = 'https://helper.testnet.near.org/account';
 const EXPLORER_TX = 'https://testnet.nearblocks.io/txns/';
 const BUYER_ACCOUNT = 'dspaid-bounty452.testnet'; // identity account from bnty_0450/bnty_0452 work
 const DEFAULT_KEYPAIR_PATH = 'C:/Users/Steam/.basedagents/keys/dspaid-keypair.json';
 const TX_AMOUNT = BigInt(nearToYocto('0.001')); // 0.001 testnet NEAR micropayment per tx
 
-const provider = new JsonRpcProvider({ url: RPC });
+let provider = null; // bound to the picked RPC in main()
 const outDir = path.dirname(fileURLToPath(import.meta.url));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const sha256 = (b) => createHash('sha256').update(b).digest();
+
+async function pickTestnetRpc() {
+  let lastErr;
+  for (const url of RPC_ENDPOINTS) {
+    try {
+      const res = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'status', params: {} }) });
+      const j = await res.json();
+      if (j.result?.chain_id === 'testnet') return url;
+      lastErr = new Error(`unexpected chain_id "${j.result?.chain_id}" from ${url}`);
+    } catch (e) { lastErr = e; }
+  }
+  throw new Error(`no live testnet RPC among ${RPC_ENDPOINTS.join(' | ')}: ${lastErr?.message}`);
+}
 
 async function balanceYocto(accountId) {
   const a = await provider.sendJsonRpc('query', { request_type: 'view_account', account_id: accountId, finality: 'final' });
@@ -93,9 +110,10 @@ async function sendTx(acc, label) {
 }
 
 async function main() {
-  const status = await provider.sendJsonRpc('status', {});
-  if ((status.chain_id ?? '') !== 'testnet') throw new Error(`refusing non-testnet chain_id: ${status.chain_id}`);
+  RPC = await pickTestnetRpc(); // guards chain_id === 'testnet' (was a post-connect check in v1)
+  provider = new JsonRpcProvider({ url: RPC });
   console.log('=== NEAR TESTNET TX EVIDENCE (thesis model pattern) ===');
+  console.log(`[near_tx] RPC: ${RPC}`);
   const acc = await resolveAccount();
   console.log(`[near_tx] paying account: ${acc.accountId} (${acc.note})`);
   const transactions = [];
